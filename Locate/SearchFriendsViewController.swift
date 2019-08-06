@@ -16,6 +16,8 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
     
     var users = [[String:Any]]()
     var myFriends = [String]()
+    var myUsername = ""
+    var myProfilePic = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +25,8 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
         Database.database().reference().child("Users").child(Auth.auth().currentUser!.uid).observeSingleEvent(of: .value) { (snapshot) in
                 if let dictionary = snapshot.value as? [String:Any]{
                     self.myFriends = dictionary["Friends"] as! [String]
+                    self.myUsername = dictionary["Username"] as! String
+                    self.myProfilePic = dictionary["ProfilePic"] as! String
                 }
         }
         
@@ -53,19 +57,25 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
         let userInfo = self.users[indexPath.row]
         
         let userID = userInfo["UserID"] as! String
+        let username = userInfo["Username"] as! String
+        let profilePic = userInfo["ProfilePic"] as! String
         var friends = myFriends
         var theirFriends = userInfo["Friends"] as! [String]
         
+        print("selected username \(username)")
+        
+        
+        //if my friends doesn't contain target uid, send them a request
         if(!friends.contains(userID)){
             print("First Friends count  \(friends.count)")
 
             friends.append(userID)
             print("Second Friends count  \(friends.count)")
-            Database.database().reference().child("Requests").child(userID).child(Auth.auth().currentUser!.uid).updateChildValues(["ActiveRequest":"Yes"])
+            Database.database().reference().child("Requests").child(userID).child(Auth.auth().currentUser!.uid).updateChildValues(["userID":Auth.auth().currentUser!.uid,"Username":self.myUsername,"ProfilePic":self.myProfilePic])
             
-            Database.database().reference().child("Users").child(Auth.auth().currentUser!.uid).updateChildValues(["Friends":friends])
             
-            let alertController = UIAlertController(title: "Added", message: "", preferredStyle: .alert)
+            
+            let alertController = UIAlertController(title: "Request Sent", message: "", preferredStyle: .alert)
             
             
             let okay = UIAlertAction(title: "Okay", style: .default) { action in
@@ -82,6 +92,7 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
             
             
         }else{
+            // my friends array contains the target uid, already friends
             let alertController = UIAlertController(title: "Already Friends", message: "", preferredStyle: .alert)
             
             
@@ -135,7 +146,9 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
                     for dict in dictionary.values{
                         let dict2 = dict as? [String:Any]
                         
-                        self.users = [dict2!]
+                        self.users.append(dict2!)
+
+                        //self.users = [dict2!]
                         DispatchQueue.main.async{
                             
                             self.searchTable.reloadData()

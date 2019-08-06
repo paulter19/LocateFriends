@@ -91,6 +91,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
     @IBAction func menuPressed(_ sender: Any) {
         let alertController = UIAlertController(title: "Menu", message: "", preferredStyle: .alert)
         
+        let visibility = UIAlertAction(title: "Hide Visibility", style: .default) { action in
+            
+            
+        }
+        
+        let requests = UIAlertAction(title: "Friend Requests", style: .default) { action in
+            let requests = self.storyboard?.instantiateViewController(withIdentifier: "Requests")
+            
+            self.present(requests!, animated: false, completion: nil)
+            
+        }
+        
         
         let logout = UIAlertAction(title: "Logout", style: .default) { action in
             do  {
@@ -106,14 +118,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
             
         }
         
+        alertController.addAction(visibility)
+        alertController.addAction(requests)
         alertController.addAction(logout)
         alertController.addAction(cancel)
+        
         self.present(alertController, animated: true, completion: nil)
     }
     
     func findFriendsLocation(){
         Database.database().reference().child("Users").child(Auth.auth().currentUser!.uid).observeSingleEvent(of: .value) { (snapshot) in
             if let dictionary = snapshot.value as? [String:Any]{
+                print("Current user is \(dictionary["Username"])")
                 self.myFriends = dictionary["Friends"] as! [String]
                
                 for f in self.myFriends{

@@ -21,6 +21,8 @@
 		6177968F22F7A96100FB578E /* GlyphMenu.png in Resources */ = {isa = PBXBuildFile; fileRef = 6177968E22F7A96000FB578E /* GlyphMenu.png */; };
 		6177969122F7A97400FB578E /* profile-img.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6177969022F7A97400FB578E /* profile-img.jpg */; };
 		6177969322F7B1CE00FB578E /* SearchFriendsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6177969222F7B1CE00FB578E /* SearchFriendsViewController.swift */; };
+		61D1D70322FA2A5F00C87A53 /* RequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D1D70222FA2A5F00C87A53 /* RequestTableViewCell.swift */; };
+		61D1D70522FA2A7200C87A53 /* RequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D1D70422FA2A7200C87A53 /* RequestViewController.swift */; };
 		83C50060E195A08E6A562966 /* Pods_LocateUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C75D3F38FCD9A3A0F641093 /* Pods_LocateUITests.framework */; };
 		BBBFDF0A374BA5057241CAE9 /* Pods_LocateTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CD8B3719C938E4D74F5FFD8 /* Pods_LocateTests.framework */; };
 /* End PBXBuildFile section */
@@ -66,6 +68,8 @@
 		6177968E22F7A96000FB578E /* GlyphMenu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GlyphMenu.png; sourceTree = "<group>"; };
 		6177969022F7A97400FB578E /* profile-img.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "profile-img.jpg"; sourceTree = "<group>"; };
 		6177969222F7B1CE00FB578E /* SearchFriendsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFriendsViewController.swift; sourceTree = "<group>"; };
+		61D1D70222FA2A5F00C87A53 /* RequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestTableViewCell.swift; sourceTree = "<group>"; };
+		61D1D70422FA2A7200C87A53 /* RequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestViewController.swift; sourceTree = "<group>"; };
 		8FCAFA190FEE2E3A4DE65213 /* Pods_Locate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Locate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD8B3719C938E4D74F5FFD8 /* Pods_LocateTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LocateTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BACE7496B908EA1FBEC2E44F /* Pods-Locate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Locate.release.xcconfig"; path = "Target Support Files/Pods-Locate/Pods-Locate.release.xcconfig"; sourceTree = "<group>"; };
@@ -131,6 +135,8 @@
 				6177968C22F6547B00FB578E /* SignUpViewController.swift */,
 				6177965C22F6485600FB578E /* ViewController.swift */,
 				6177965E22F6485600FB578E /* Main.storyboard */,
+				61D1D70222FA2A5F00C87A53 /* RequestTableViewCell.swift */,
+				61D1D70422FA2A7200C87A53 /* RequestViewController.swift */,
 				6177969222F7B1CE00FB578E /* SearchFriendsViewController.swift */,
 				6177966122F6485900FB578E /* Assets.xcassets */,
 				6177966322F6485900FB578E /* LaunchScreen.storyboard */,
@@ -420,9 +426,11 @@
 			files = (
 				6177965D22F6485600FB578E /* ViewController.swift in Sources */,
 				6177965B22F6485600FB578E /* AppDelegate.swift in Sources */,
+				61D1D70522FA2A7200C87A53 /* RequestViewController.swift in Sources */,
 				6177968D22F6547B00FB578E /* SignUpViewController.swift in Sources */,
 				6177969322F7B1CE00FB578E /* SearchFriendsViewController.swift in Sources */,
 				6177968B22F6546C00FB578E /* SignInViewController.swift in Sources */,
+				61D1D70322FA2A5F00C87A53 /* RequestTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
