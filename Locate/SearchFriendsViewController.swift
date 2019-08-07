@@ -54,9 +54,37 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
         let userInfo = self.users[indexPath.row]
         let username = userInfo["Username"] as! String
         let email = userInfo["Email"] as! String
-        
+        let profilePic = userInfo["ProfilePic"] as! String
         cell.textLabel?.text = username
         cell.detailTextLabel?.text = email
+        
+        let url = URL(string: profilePic)
+        URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
+            
+            if error != nil {
+                print("Theres an error: " + error.debugDescription)
+                return
+            }
+            
+            DispatchQueue.main.async {
+                
+                if let downloadedImage = UIImage(data: data!){
+                    
+                    cell.imageView?.isHidden = true
+
+                    cell.imageView?.image = downloadedImage
+                    cell.imageView?.clipsToBounds = true
+                    cell.imageView?.frame = CGRect(x: cell.imageView?.frame.origin.x ?? 0, y: cell.imageView?.frame.origin.y ?? 0, width: 30, height: 30)
+                    cell.imageView?.contentMode = .scaleAspectFit
+                    
+                    cell.imageView?.isHidden = false
+
+                    
+                    
+                    
+                }
+            }
+        }).resume()
         
         
         return cell

@@ -137,6 +137,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
                 
             }
             
+           
+            
             let home = (self.storyboard?.instantiateViewController(withIdentifier: "Home"))!
             self.present(home, animated: false, completion: nil)
         }
@@ -240,7 +242,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
    
     
 }
-extension ViewController: MKMapViewDelegate, GADBannerViewDelegate{
+extension ViewController: MKMapViewDelegate, GADBannerViewDelegate, GADInterstitialDelegate{
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             var view = mapView.dequeueReusableAnnotationView(withIdentifier: "reuse") as? MKMarkerAnnotationView
         
@@ -251,6 +253,20 @@ extension ViewController: MKMapViewDelegate, GADBannerViewDelegate{
         view?.annotation = annotation
         view?.displayPriority = .required
         return view
+    }
+    
+    func loadInterstitialAd(){
+        var  interstitial = GADInterstitial(adUnitID: "ca-app-pub-1666211014421581/7156234473")
+        interstitial.delegate = self
+        
+        interstitial.load(GADRequest())
+    
+        if interstitial.isReady {
+            print("interstitial ready")
+            interstitial.present(fromRootViewController: self)
+        } else {
+            print("Ad wasn't ready :(")
+        }
     }
     
     
@@ -284,6 +300,40 @@ extension ViewController: MKMapViewDelegate, GADBannerViewDelegate{
     /// the App Store), backgrounding the current app.
     func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
         print("adViewWillLeaveApplication")
+    }
+    
+    
+    //interstitial protocols
+    
+    
+    func interstitialDidReceiveAd(_ ad: GADInterstitial) {
+        print("interstitialDidReceiveAd")
+    }
+    
+    /// Tells the delegate an ad request failed.
+    func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
+        print("interstitial:didFailToReceiveAdWithError: \(error.localizedDescription)")
+    }
+    
+    /// Tells the delegate that an interstitial will be presented.
+    func interstitialWillPresentScreen(_ ad: GADInterstitial) {
+        print("interstitialWillPresentScreen")
+    }
+    
+    /// Tells the delegate the interstitial is to be animated off the screen.
+    func interstitialWillDismissScreen(_ ad: GADInterstitial) {
+        print("interstitialWillDismissScreen")
+    }
+    
+    /// Tells the delegate the interstitial had been animated off the screen.
+    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+        print("interstitialDidDismissScreen")
+    }
+    
+    /// Tells the delegate that a user click will open another app
+    /// (such as the App Store), backgrounding the current app.
+    func interstitialWillLeaveApplication(_ ad: GADInterstitial) {
+        print("interstitialWillLeaveApplication")
     }
 }
 

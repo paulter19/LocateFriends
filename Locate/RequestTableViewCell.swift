@@ -16,7 +16,8 @@ class RequestTableViewCell: UITableViewCell {
     @IBOutlet weak var usernameLabel: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        self.profilePic.clipsToBounds = true
+        self.profilePic.layer.cornerRadius = self.profilePic.frame.width / 2
     }
 
     @IBAction func acceptPressed(_ sender: Any) {

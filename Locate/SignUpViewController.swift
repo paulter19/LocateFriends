@@ -117,7 +117,6 @@ class SignUpViewController: UIViewController {
     @IBAction func chooseProfilePic(_ sender: Any) {
         let picker = UIImagePickerController()
         picker.delegate = self
-        picker.allowsEditing = true
         present(picker, animated: true, completion: nil)
     }
     

@@ -28,6 +28,9 @@ class RequestViewController: UIViewController,UITableViewDelegate,UITableViewDat
         view.adUnitID = "ca-app-pub-1666211014421581/1420692067"
         view.load(GADRequest())
         self.view.addSubview(view)
+        
+        self.requestTable.estimatedRowHeight = 83.0
+        self.requestTable.rowHeight = UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
