@@ -11,14 +11,17 @@ import CoreLocation
 import MapKit
 import FirebaseAuth
 import FirebaseDatabase
+import GoogleMobileAds
 
 class ViewController: UIViewController, CLLocationManagerDelegate  {
 
     let regionRadius: CLLocationDistance = 5000
     let locationManager = CLLocationManager()
     var myFriends = [String]()
+    var visibility = ""
 
     @IBOutlet weak var mapKit: MKMapView!
+    @IBOutlet weak var notificationBell: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,9 +30,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestAlwaysAuthorization()
-       // centerMapOnLocation(location: CLLocation(latitude: 44, longitude: -91))
 
         locationManager.startUpdatingLocation()
+        
+        let view = GADBannerView()
+        view.frame = CGRect(x: 0, y: self.view.frame.maxY - 50, width: 320, height: 50)
+        view.delegate = self
+        view.rootViewController = self
+        view.adUnitID = "ca-app-pub-1666211014421581/1420692067"
+        view.load(GADRequest())
+        self.view.addSubview(view)
+        
         
         
         
@@ -38,6 +49,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        
         checkIfUserSignedIn()
         
 
@@ -50,7 +62,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
             let signInView = (self.storyboard?.instantiateViewController(withIdentifier: "SignIn"))!
             self.present(signInView, animated: false, completion: nil)
         }else{
+            getMyVisibility()
             findFriendsLocation()
+            getRequests()
+
         }
     }
     
@@ -60,7 +75,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         mapKit.setRegion(coordinateRegion, animated: true)
         
         let annotation = MKPointAnnotation()
-        annotation.title = "Current Location"
+        annotation.title = "Current Location \(self.visibility)"
         //You can also add a subtitle that displays under the annotation such as
         annotation.subtitle = DateFormatter.localizedString(from: Date.init(), dateStyle: DateFormatter.Style.none, timeStyle: DateFormatter.Style.short)
         annotation.coordinate = location.coordinate
@@ -76,32 +91,57 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print("did update location!!")
-        centerMapOnLocation(location: locationManager.location ?? CLLocation(latitude: 47, longitude: -91))
+        
         if(manager.location != nil){
             updateCurrentLocation(location: manager.location!)
+            centerMapOnLocation(location: locationManager.location ?? CLLocation(latitude: 47, longitude: -91))
         }
         locationManager.stopUpdatingLocation()
     }
     
     func updateCurrentLocation(location: CLLocation){
         var time = (Int)(Date.timeIntervalSinceReferenceDate)
-        Database.database().reference().child("Locations").child(Auth.auth().currentUser!.uid).updateChildValues(["Username":Auth.auth().currentUser?.displayName,"latitude":location.coordinate.latitude,"longitude":location.coordinate.longitude,"lastUpdated":time,"UserID":Auth.auth().currentUser!.uid])
+       
+        //first get visibility
+        Database.database().reference().child("Users").child(Auth.auth().currentUser!.uid).observeSingleEvent(of: .value) { (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String:Any]{
+                self.visibility = dictionary["Visibility"] as! String
+
+                //update location
+                
+                Database.database().reference().child("Locations").child(Auth.auth().currentUser!.uid).updateChildValues(["Username":Auth.auth().currentUser?.displayName,"latitude":location.coordinate.latitude,"longitude":location.coordinate.longitude,"lastUpdated":time,"UserID":Auth.auth().currentUser!.uid,"Visibility":self.visibility])
+                
+                
+            }
+        }
+        
     }
 
     @IBAction func menuPressed(_ sender: Any) {
         let alertController = UIAlertController(title: "Menu", message: "", preferredStyle: .alert)
         
-        let visibility = UIAlertAction(title: "Hide Visibility", style: .default) { action in
-            
-            
+        var visibilityLabel = ""
+        if(self.visibility == "On"){
+            visibilityLabel = "Hide Visibility"
+        }else{
+            visibilityLabel = "Show Visibility"
         }
         
-        let requests = UIAlertAction(title: "Friend Requests", style: .default) { action in
-            let requests = self.storyboard?.instantiateViewController(withIdentifier: "Requests")
+        let visibility = UIAlertAction(title: visibilityLabel, style: .default) { action in
             
-            self.present(requests!, animated: false, completion: nil)
+            if(self.visibility == "On"){
+                Database.database().reference().child("Users").child(Auth.auth().currentUser!.uid).updateChildValues(["Visibility":"Off"])
+            }else{
+                Database.database().reference().child("Users").child(Auth.auth().currentUser!.uid).updateChildValues(["Visibility":"On"])
+                
+            }
             
+            let home = (self.storyboard?.instantiateViewController(withIdentifier: "Home"))!
+            self.present(home, animated: false, completion: nil)
         }
+        
+        
         
         
         let logout = UIAlertAction(title: "Logout", style: .default) { action in
@@ -119,7 +159,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         }
         
         alertController.addAction(visibility)
-        alertController.addAction(requests)
         alertController.addAction(logout)
         alertController.addAction(cancel)
         
@@ -131,29 +170,39 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
             if let dictionary = snapshot.value as? [String:Any]{
                 print("Current user is \(dictionary["Username"])")
                 self.myFriends = dictionary["Friends"] as! [String]
+                self.visibility = dictionary["Visibility"] as! String
                
                 for f in self.myFriends{
-                    print("There id is \(f)")
                     Database.database().reference().child("Locations").queryOrdered(byChild: "UserID").queryEqual(toValue: f).observeSingleEvent(of: .value, with: { (snapshot) in
                        if let dictionary = snapshot.value as? [String:Any]{
-                        print("Snapshot value \(snapshot)")
-                        let annotation = MKPointAnnotation()
                         for dict in dictionary.values{
                             let dict2 = dict as! [String:Any]
-                        if let username = dict2["username"] as? String{
+                        if let username = dict2["Username"] as? String{
                             print("Username is \(username)")
-                        annotation.title = username
-                            
-                            let lastUpdated = dict2["lastUpdated"] as! TimeInterval
-                            
-                            let latitude = dict2["latitude"] as! Double
-                            let longitude = dict2["longitude"] as! Double
+
+                            if let userVisibility = dict2["Visibility"] as? String{
+                                if(userVisibility == "On"){
+                                    print("Visibility is On")
+                                    let annotation = MKPointAnnotation()
+                                    
+                                    annotation.title = username
+                                    
+                                    let lastUpdated = dict2["lastUpdated"] as! TimeInterval
+                                    
+                                    let latitude = dict2["latitude"] as! Double
+                                    let longitude = dict2["longitude"] as! Double
+                                    
+                                    annotation.subtitle = DateFormatter.localizedString(from: Date.init(timeIntervalSinceReferenceDate: lastUpdated ), dateStyle: DateFormatter.Style.none, timeStyle: DateFormatter.Style.short)
+                                    annotation.coordinate = CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
+                                    
+                                    
+                                    self.mapKit.addAnnotation(annotation)
+                                }else{
+                                    print("visibility was off")
+                                }
+                               
+                            }
                         
-                        annotation.subtitle = DateFormatter.localizedString(from: Date.init(timeIntervalSinceReferenceDate: lastUpdated ), dateStyle: DateFormatter.Style.none, timeStyle: DateFormatter.Style.short)
-                            annotation.coordinate = CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
-                        
-                            
-                            self.mapKit.addAnnotation(annotation)
                         }// end if let username
                         }
                         }// end for dict in dictionary.values
@@ -163,5 +212,78 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         }
     }
     
+    
+    
+    func getRequests(){
+        Database.database().reference().child("Requests").child(Auth.auth().currentUser!.uid).observeSingleEvent(of: .value) { (snapshot) in
+            //  check if you have notifications
+            if(snapshot.exists()){
+                //change notification bell
+                let bellImage = UIImage(named: "newNotification.png")
+                self.notificationBell.setImage(bellImage, for: .normal);
+                
+            }
+        }
+    }
+    
+    func getMyVisibility(){
+        Database.database().reference().child("Users").child(Auth.auth().currentUser!.uid).observeSingleEvent(of: .value) { (snapshot) in
+
+            if let dictionary = snapshot.value as? [String:Any]{
+                self.visibility = dictionary["Visibility"] as! String
+                print("My visibility is \(self.visibility)")
+                
+            }
+        }
+    }
+    
+   
+    
+}
+extension ViewController: MKMapViewDelegate, GADBannerViewDelegate{
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            var view = mapView.dequeueReusableAnnotationView(withIdentifier: "reuse") as? MKMarkerAnnotationView
+        
+        if(view == nil){
+            view = MKMarkerAnnotationView(annotation: nil, reuseIdentifier: "reuse")
+            
+        }
+        view?.annotation = annotation
+        view?.displayPriority = .required
+        return view
+    }
+    
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("adViewDidReceiveAd")
+    }
+    
+    /// Tells the delegate an ad request failed.
+    func adView(_ bannerView: GADBannerView,
+                didFailToReceiveAdWithError error: GADRequestError) {
+        print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+    }
+    
+    /// Tells the delegate that a full-screen view will be presented in response
+    /// to the user clicking on an ad.
+    func adViewWillPresentScreen(_ bannerView: GADBannerView) {
+        print("adViewWillPresentScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view will be dismissed.
+    func adViewWillDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewWillDismissScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view has been dismissed.
+    func adViewDidDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewDidDismissScreen")
+    }
+    
+    /// Tells the delegate that a user click will open another app (such as
+    /// the App Store), backgrounding the current app.
+    func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
+        print("adViewWillLeaveApplication")
+    }
 }
 

@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import GoogleMobileAds
 
 class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate {
     
@@ -29,6 +30,14 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
                     self.myProfilePic = dictionary["ProfilePic"] as! String
                 }
         }
+        
+        let view = GADBannerView()
+        view.frame = CGRect(x: 0, y: self.view.frame.maxY - 50, width: 320, height: 50)
+        view.delegate = self
+        view.rootViewController = self
+        view.adUnitID = "ca-app-pub-1666211014421581/1420692067"
+        view.load(GADRequest())
+        self.view.addSubview(view)
         
     }
     
@@ -117,6 +126,17 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
                 
                 Database.database().reference().child("Users").child(userID).updateChildValues(["Friends":theirNewFriends])
                 
+                
+                let alert2 = UIAlertController(title: "Deleted Friend", message: "They will no longer see each other's location", preferredStyle: UIAlertController.Style.alert)
+                
+                alert2.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { (action) in
+                        let home = self.storyboard?.instantiateViewController(withIdentifier: "Home")
+                    self.present(home!, animated: true, completion: nil)
+                    
+                })
+                )
+                self.present(alert2, animated: true, completion: nil)
+                
                
             }
             
@@ -138,6 +158,8 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.users = [[String:Any]]()
+        self.searchTable.reloadData()
+        
         let ref = Database.database().reference()
         ref.child("Users").queryOrdered(byChild: "CapitalUsername").queryStarting(atValue: searchText.uppercased()).queryEnding(atValue: "\(searchText.uppercased())\\uf8ff")
             .observeSingleEvent(of: .value, with: {(snapshot: DataSnapshot) in
@@ -194,4 +216,37 @@ class SearchFriendsViewController: UIViewController,UITableViewDelegate,UITableV
     }
     */
 
+}
+extension SearchFriendsViewController: GADBannerViewDelegate{
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("adViewDidReceiveAd")
+    }
+    
+    /// Tells the delegate an ad request failed.
+    func adView(_ bannerView: GADBannerView,
+                didFailToReceiveAdWithError error: GADRequestError) {
+        print("adView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+    }
+    
+    /// Tells the delegate that a full-screen view will be presented in response
+    /// to the user clicking on an ad.
+    func adViewWillPresentScreen(_ bannerView: GADBannerView) {
+        print("adViewWillPresentScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view will be dismissed.
+    func adViewWillDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewWillDismissScreen")
+    }
+    
+    /// Tells the delegate that the full-screen view has been dismissed.
+    func adViewDidDismissScreen(_ bannerView: GADBannerView) {
+        print("adViewDidDismissScreen")
+    }
+    
+    /// Tells the delegate that a user click will open another app (such as
+    /// the App Store), backgrounding the current app.
+    func adViewWillLeaveApplication(_ bannerView: GADBannerView) {
+        print("adViewWillLeaveApplication")
+    }
 }

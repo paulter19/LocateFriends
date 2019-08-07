@@ -16,6 +16,7 @@ pod 'Firebase/Analytics'
 pod 'Firebase/Database'
 pod 'Firebase/Auth'
 pod 'Firebase/Storage'
+pod 'Google-Mobile-Ads-SDK'
 
 
   target 'LocateUITests' do

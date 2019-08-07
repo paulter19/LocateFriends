@@ -60,7 +60,7 @@ class SignUpViewController: UIViewController {
                                 let newUserReference = ref.child(userID!)
                                 
                                 
-                                newUserReference.setValue(["Username":self.username.text,"Email":self.email.text,"UserID":userID,"Friends":[Auth.auth().currentUser?.uid],"ProfilePic":downloadURL?.absoluteString,"CapitalUsername":self.username.text?.uppercased(),])
+                                newUserReference.setValue(["Username":self.username.text,"Email":self.email.text,"UserID":userID,"Friends":[Auth.auth().currentUser?.uid],"ProfilePic":downloadURL?.absoluteString,"CapitalUsername":self.username.text?.uppercased(),"Visibility":"On"])
                                 let changeRequest = user?.user.createProfileChangeRequest()
                                 
                                 changeRequest?.displayName = self.username.text

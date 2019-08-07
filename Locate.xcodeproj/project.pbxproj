@@ -23,6 +23,10 @@
 		6177969322F7B1CE00FB578E /* SearchFriendsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6177969222F7B1CE00FB578E /* SearchFriendsViewController.swift */; };
 		61D1D70322FA2A5F00C87A53 /* RequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D1D70222FA2A5F00C87A53 /* RequestTableViewCell.swift */; };
 		61D1D70522FA2A7200C87A53 /* RequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D1D70422FA2A7200C87A53 /* RequestViewController.swift */; };
+		61D1D70722FA400300C87A53 /* blueBell.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 61D1D70622FA400300C87A53 /* blueBell.jpg */; };
+		61D1D70922FA40E000C87A53 /* newNotification.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D1D70822FA40E000C87A53 /* newNotification.png */; };
+		61D1D70B22FA427500C87A53 /* notificationBell.png in Resources */ = {isa = PBXBuildFile; fileRef = 61D1D70A22FA427400C87A53 /* notificationBell.png */; };
+		61D1D70D22FA4F3E00C87A53 /* appLogo.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 61D1D70C22FA4F3E00C87A53 /* appLogo.PNG */; };
 		83C50060E195A08E6A562966 /* Pods_LocateUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C75D3F38FCD9A3A0F641093 /* Pods_LocateUITests.framework */; };
 		BBBFDF0A374BA5057241CAE9 /* Pods_LocateTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CD8B3719C938E4D74F5FFD8 /* Pods_LocateTests.framework */; };
 /* End PBXBuildFile section */
@@ -70,6 +74,10 @@
 		6177969222F7B1CE00FB578E /* SearchFriendsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFriendsViewController.swift; sourceTree = "<group>"; };
 		61D1D70222FA2A5F00C87A53 /* RequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestTableViewCell.swift; sourceTree = "<group>"; };
 		61D1D70422FA2A7200C87A53 /* RequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestViewController.swift; sourceTree = "<group>"; };
+		61D1D70622FA400300C87A53 /* blueBell.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blueBell.jpg; sourceTree = "<group>"; };
+		61D1D70822FA40E000C87A53 /* newNotification.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = newNotification.png; sourceTree = "<group>"; };
+		61D1D70A22FA427400C87A53 /* notificationBell.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notificationBell.png; sourceTree = "<group>"; };
+		61D1D70C22FA4F3E00C87A53 /* appLogo.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appLogo.PNG; sourceTree = "<group>"; };
 		8FCAFA190FEE2E3A4DE65213 /* Pods_Locate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Locate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CD8B3719C938E4D74F5FFD8 /* Pods_LocateTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LocateTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BACE7496B908EA1FBEC2E44F /* Pods-Locate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Locate.release.xcconfig"; path = "Target Support Files/Pods-Locate/Pods-Locate.release.xcconfig"; sourceTree = "<group>"; };
@@ -143,7 +151,11 @@
 				6177966622F6485900FB578E /* Info.plist */,
 				6177968822F6538200FB578E /* GoogleService-Info.plist */,
 				6177968E22F7A96000FB578E /* GlyphMenu.png */,
+				61D1D70622FA400300C87A53 /* blueBell.jpg */,
 				6177969022F7A97400FB578E /* profile-img.jpg */,
+				61D1D70A22FA427400C87A53 /* notificationBell.png */,
+				61D1D70822FA40E000C87A53 /* newNotification.png */,
+				61D1D70C22FA4F3E00C87A53 /* appLogo.PNG */,
 			);
 			path = Locate;
 			sourceTree = "<group>";
@@ -300,9 +312,13 @@
 				6177968F22F7A96100FB578E /* GlyphMenu.png in Resources */,
 				6177966522F6485900FB578E /* LaunchScreen.storyboard in Resources */,
 				6177968922F6538200FB578E /* GoogleService-Info.plist in Resources */,
+				61D1D70B22FA427500C87A53 /* notificationBell.png in Resources */,
+				61D1D70D22FA4F3E00C87A53 /* appLogo.PNG in Resources */,
 				6177966222F6485900FB578E /* Assets.xcassets in Resources */,
 				6177966022F6485600FB578E /* Main.storyboard in Resources */,
+				61D1D70722FA400300C87A53 /* blueBell.jpg in Resources */,
 				6177969122F7A97400FB578E /* profile-img.jpg in Resources */,
+				61D1D70922FA40E000C87A53 /* newNotification.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
