@@ -13,16 +13,21 @@ import FirebaseAuth
 import FirebaseDatabase
 import GoogleMobileAds
 
-class ViewController: UIViewController, CLLocationManagerDelegate  {
+class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate,UITableViewDataSource  {
+   
+    
 
     let regionRadius: CLLocationDistance = 5000
     let locationManager = CLLocationManager()
     var myFriends = [String]()
     var visibility = ""
+    var friendsDictionary = [[String:Any]]()
 
     @IBOutlet weak var mapKit: MKMapView!
     @IBOutlet weak var notificationBell: UIButton!
     
+    @IBOutlet weak var searchFriendsButton: UIButton!
+    @IBOutlet weak var friendsTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -34,13 +39,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         locationManager.startUpdatingLocation()
         
         let view = GADBannerView()
-        view.frame = CGRect(x: 0, y: self.view.frame.maxY - 50, width: 320, height: 50)
+        view.frame = CGRect(x: 0, y: self.view.frame.maxY - 50, width: self.view.frame.width, height: 50)
         view.delegate = self
         view.rootViewController = self
         view.adUnitID = "ca-app-pub-1666211014421581/1420692067"
         view.load(GADRequest())
         self.view.addSubview(view)
         
+        
+        self.searchFriendsButton.layer.cornerRadius = 10
         
         
         
@@ -52,6 +59,54 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
         
         checkIfUserSignedIn()
         
+
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        self.friendsDictionary.count
+       }
+       
+       func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let friend = self.friendsDictionary[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.textLabel?.text = friend["Username"] as! String
+        let lastUpdated = friend["lastUpdated"] as! TimeInterval
+        let dateObject = Date.init(timeIntervalSinceReferenceDate: lastUpdated)
+        //cell.imageView?.image = UIImage(named: "friends.png")
+        //cell.imageView?.frame = CGRect(x: 0, y: 0, width: 15, height: 15)
+        if(NSCalendar.current.isDateInToday(dateObject)){
+            print("tup - today")
+            cell.detailTextLabel!.text = "Updated today: \( DateFormatter.localizedString(from: dateObject, dateStyle: DateFormatter.Style.none, timeStyle: DateFormatter.Style.short))"
+
+                   }
+        else if(NSCalendar.current.isDateInYesterday(dateObject)){
+            print("tup - yesterday")
+
+            cell.detailTextLabel!.text = "Updated yesterday:" + DateFormatter.localizedString(from: dateObject, dateStyle: DateFormatter.Style.none, timeStyle: DateFormatter.Style.short)
+                   }
+        else{
+            print("tup - ???")
+
+            cell.detailTextLabel!.text = "Updated: " + DateFormatter.localizedString(from: dateObject, dateStyle: DateFormatter.Style.short, timeStyle: DateFormatter.Style.short)
+                   }
+        
+      
+        
+        
+        
+        return cell
+        
+       }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let friend = self.friendsDictionary[indexPath.row]
+        let long = friend["longitude"] as! Double
+        let lat = friend["latitude"] as! Double
+        
+        let location = CLLocation(latitude: lat, longitude: long)
+        let coordinateRegion = MKCoordinateRegion(center: location.coordinate,
+                                                  latitudinalMeters: regionRadius, longitudinalMeters: regionRadius)
+        mapKit.setRegion(coordinateRegion, animated: true)
 
     }
     
@@ -184,6 +239,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
 
                             if let userVisibility = dict2["Visibility"] as? String{
                                 if(userVisibility == "On"){
+                                    self.friendsDictionary.append(dict2)
                                     print("Visibility is On")
                                     let annotation = MKPointAnnotation()
                                     
@@ -208,6 +264,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate  {
                         }// end if let username
                         }
                         }// end for dict in dictionary.values
+                        
+                        DispatchQueue.main.async {
+                            self.friendsTableView.reloadData()
+                        }
                     })//end database.database()
                 }
             }
